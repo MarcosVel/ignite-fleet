@@ -1,11 +1,25 @@
-import { StyleSheet } from "react-native";
+import styled from "styled-components/native";
 import theme from "../../theme";
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.COLORS.GRAY_800,
-  },
-});
+export const Container = styled.ImageBackground`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  background-color: ${theme.COLORS.GRAY_800};
+`;
+
+export const Title = styled.Text`
+  color: ${theme.COLORS.BRAND_LIGHT};
+  font-size: ${theme.FONT_SIZE.XXXL}px;
+  font-family: ${theme.FONT_FAMILY.BOLD};
+  text-align: center;
+  margin-bottom: 4px;
+`;
+
+export const Slogan = styled.Text`
+  color: ${theme.COLORS.GRAY_100};
+  font-size: ${theme.FONT_SIZE.MD}px;
+  font-family: ${theme.FONT_FAMILY.REGULAR};
+  text-align: center;
+  margin-bottom: 32px;
+`;
