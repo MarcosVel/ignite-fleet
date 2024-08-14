@@ -1,3 +1,4 @@
+import { ANDROID_CLIENT_ID } from "@env";
 import {
   Roboto_400Regular,
   Roboto_700Bold,
@@ -15,6 +16,8 @@ export default function App() {
   if (!fontsLoaded) {
     return <Loading />;
   }
+
+  console.log("ANDROID_CLIENT_ID", ANDROID_CLIENT_ID);
 
   return (
     <ThemeProvider theme={theme}>
