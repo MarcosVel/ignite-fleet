@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.3",
+    "@react-native-google-signin/google-signin": "^12.2.1",
     "expo": "~51.0.24",
     "expo-font": "~12.0.9",
     "expo-status-bar": "~1.12.1",
