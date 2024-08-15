@@ -18,10 +18,13 @@ export default function SignIn() {
   async function handleGoogleSignIn() {
     try {
       setIsAuthenticating(true);
-      const response = await GoogleSignin.signIn();
-      console.log(response);
+      const { idToken } = await GoogleSignin.signIn();
 
-      setIsAuthenticating(false);
+      if (!idToken) {
+        Alert.alert("Ops!", "Não foi possível conectar com sua conta google");
+        setIsAuthenticating(false);
+        return;
+      }
     } catch (error) {
       console.error(error);
       Alert.alert("Ops!", "Não foi possível conectar com sua conta google");
