@@ -11,12 +11,14 @@
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.3",
     "@react-native-google-signin/google-signin": "^12.2.1",
+    "@realm/react": "^0.10.0",
     "expo": "~51.0.24",
     "expo-font": "~12.0.9",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "react": "18.2.0",
     "react-native": "0.74.3",
+    "realm": "^12.13.0",
     "styled-components": "^6.1.12"
   },
   "devDependencies": {

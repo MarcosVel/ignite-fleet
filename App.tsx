@@ -1,12 +1,14 @@
+import { REALM_APP_ID } from "@env";
 import {
   Roboto_400Regular,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
+import { AppProvider, UserProvider } from "@realm/react";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider } from "styled-components/native";
 import { Loading } from "./src/components";
-import { SignIn } from "./src/screens";
+import { Home, SignIn } from "./src/screens";
 import theme from "./src/theme";
 
 export default function App() {
@@ -17,9 +19,13 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <StatusBar style="light" backgroundColor="transparent" translucent />
-      <SignIn />
-    </ThemeProvider>
+    <AppProvider id={REALM_APP_ID}>
+      <ThemeProvider theme={theme}>
+        <StatusBar style="light" backgroundColor="transparent" translucent />
+        <UserProvider fallback={SignIn}>
+          <Home />
+        </UserProvider>
+      </ThemeProvider>
+    </AppProvider>
   );
 }
