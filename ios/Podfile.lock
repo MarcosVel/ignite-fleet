@@ -1224,6 +1224,8 @@ PODS:
   - RNGoogleSignin (12.2.1):
     - GoogleSignIn (~> 7.1)
     - React-Core
+  - RNSVG (15.2.0):
+    - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1294,6 +1296,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RealmJS (from `../node_modules/realm`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1434,6 +1437,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/realm"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1506,6 +1511,7 @@ SPEC CHECKSUMS:
   ReactCommon: f00e436b3925a7ae44dfa294b43ef360fbd8ccc4
   RealmJS: a8c77aa700951e22403015390b33135f7ad4ace9
   RNGoogleSignin: 08dc4ba7eac2096c7fecfe109f0950fa4683c803
+  RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 04f1db30bb810187397fa4c37dd1868a27af229c
 

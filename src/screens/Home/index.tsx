@@ -1,10 +1,11 @@
 import React from "react";
-import { Container, Title } from "./styles";
+import { HomeHeader } from "../../components";
+import { Container } from "./styles";
 
 export default function index() {
   return (
     <Container>
-      <Title>Home</Title>
+      <HomeHeader />
     </Container>
   );
 }
