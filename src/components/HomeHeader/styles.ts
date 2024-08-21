@@ -1,5 +1,7 @@
+import { Image } from "expo-image";
 import styled from "styled-components/native";
 import theme from "../../theme";
+import { Platform } from "react-native";
 
 export const SafeArea = styled.SafeAreaView`
   background-color: ${theme.COLORS.GRAY_700};
@@ -8,6 +10,7 @@ export const SafeArea = styled.SafeAreaView`
 export const Container = styled.View`
   width: 100%;
   padding: 16px 32px 32px;
+  padding-top: ${Platform.OS === "android" ? 48 : 16}px;
   flex-direction: row;
   align-items: center;
   background-color: ${theme.COLORS.GRAY_700};
@@ -28,4 +31,10 @@ export const Name = styled.Text`
   color: ${theme.COLORS.GRAY_100};
   font-size: ${theme.FONT_SIZE.LG}px;
   font-family: ${theme.FONT_FAMILY.BOLD};
+`;
+
+export const Picture = styled(Image)`
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
 `;

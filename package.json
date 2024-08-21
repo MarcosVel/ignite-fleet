@@ -14,6 +14,7 @@
     "@realm/react": "^0.10.0",
     "expo": "~51.0.24",
     "expo-font": "~12.0.9",
+    "expo-image": "~1.12.14",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "phosphor-react-native": "^2.2.0",
