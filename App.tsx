@@ -8,7 +8,8 @@ import { AppProvider, UserProvider } from "@realm/react";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProvider } from "styled-components/native";
 import { Loading } from "./src/components";
-import { Home, SignIn } from "./src/screens";
+import { Routes } from "./src/routes";
+import { SignIn } from "./src/screens";
 import theme from "./src/theme";
 
 export default function App() {
@@ -23,7 +24,7 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <StatusBar style="light" backgroundColor="transparent" translucent />
         <UserProvider fallback={SignIn}>
-          <Home />
+          <Routes />
         </UserProvider>
       </ThemeProvider>
     </AppProvider>
