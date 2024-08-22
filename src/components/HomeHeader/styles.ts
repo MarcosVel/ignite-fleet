@@ -9,8 +9,8 @@ export const SafeArea = styled.SafeAreaView`
 
 export const Container = styled.View`
   width: 100%;
-  padding: 16px 32px 32px;
-  padding-top: ${Platform.OS === "android" ? 48 : 16}px;
+  padding: 0 32px 32px;
+  /* padding-top: ${Platform.OS === "android" ? 48 : 16}px; */
   flex-direction: row;
   align-items: center;
   background-color: ${theme.COLORS.GRAY_700};

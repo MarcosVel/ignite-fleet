@@ -3,6 +3,7 @@ import { useApp, useUser } from "@realm/react";
 import { Power } from "phosphor-react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import theme from "../../theme";
 import {
   Container,
@@ -16,6 +17,9 @@ import {
 export default function HomeHeader() {
   const { profile } = useUser();
   const app = useApp();
+  const insets = useSafeAreaInsets();
+
+  const paddingTop = insets.top + 20;
 
   function handleLogout() {
     GoogleSignin.signOut();
@@ -24,7 +28,7 @@ export default function HomeHeader() {
 
   return (
     <SafeArea>
-      <Container>
+      <Container style={{ paddingTop }}>
         <Picture
           source={{ uri: profile.pictureUrl }}
           placeholder="L184i9ofbHof00ayjtay~qj[fQj["
