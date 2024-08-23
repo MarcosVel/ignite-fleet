@@ -1,7 +1,31 @@
-import { index, Object } from "realm";
+import { BSON, Object } from "realm";
+
+type GenerateProps = {
+  user_id: string;
+  description: string;
+  license_plate: string;
+};
 
 export class Historic extends Object<Historic> {
-  static generate() {}
+  _id!: string;
+  user_id!: string;
+  license_plate!: string;
+  description!: string;
+  status!: string;
+  create_at!: string;
+  update_at!: string;
+
+  static generate({ user_id, description, license_plate }: GenerateProps) {
+    return {
+      _id: new BSON.UUID(),
+      user_id,
+      description,
+      license_plate,
+      status: "departure",
+      create_at: new Date(),
+      update_at: new Date(),
+    };
+  }
 
   static schema = {
     name: "Historic",
