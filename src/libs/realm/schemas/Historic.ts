@@ -1,4 +1,5 @@
-import { BSON, Object } from "realm";
+import { Realm } from "@realm/react";
+import { ObjectSchema } from "realm";
 
 type GenerateProps = {
   user_id: string;
@@ -6,7 +7,7 @@ type GenerateProps = {
   license_plate: string;
 };
 
-export class Historic extends Object<Historic> {
+export class Historic extends Realm.Object<Historic> {
   _id!: string;
   user_id!: string;
   license_plate!: string;
@@ -17,7 +18,7 @@ export class Historic extends Object<Historic> {
 
   static generate({ user_id, description, license_plate }: GenerateProps) {
     return {
-      _id: new BSON.UUID(),
+      _id: new Realm.BSON.UUID(),
       user_id,
       description,
       license_plate,
@@ -27,7 +28,7 @@ export class Historic extends Object<Historic> {
     };
   }
 
-  static schema = {
+  static schema: ObjectSchema = {
     name: "Historic",
     primaryKey: "_id",
 

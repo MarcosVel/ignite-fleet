@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components/native";
 import { Loading } from "./src/components";
+import { RealmProvider } from "./src/libs/realm";
 import { Routes } from "./src/routes";
 import { SignIn } from "./src/screens";
 import theme from "./src/theme";
@@ -26,7 +27,9 @@ export default function App() {
         <SafeAreaProvider>
           <StatusBar style="light" backgroundColor="transparent" translucent />
           <UserProvider fallback={SignIn}>
-            <Routes />
+            <RealmProvider>
+              <Routes />
+            </RealmProvider>
           </UserProvider>
         </SafeAreaProvider>
       </ThemeProvider>
