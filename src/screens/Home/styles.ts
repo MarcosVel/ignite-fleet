@@ -6,6 +6,7 @@ export const Container = styled.View`
   background-color: ${theme.COLORS.GRAY_800};
 `;
 
-export const Title = styled.Text`
-  color: white;
+export const Content = styled.View`
+  flex: 1;
+  padding: 0 32px;
 `;
