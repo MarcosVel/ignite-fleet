@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Home } from "../screens";
+import { Departure, Home } from "../screens";
 import theme from "../theme";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -12,7 +12,8 @@ export function AppRoutes() {
         navigationBarColor: theme.COLORS.GRAY_800,
       }}
     >
-      <Screen name="Home" component={Home} />
+      <Screen name="home" component={Home} />
+      <Screen name="departure" component={Departure} />
     </Navigator>
   );
 }
