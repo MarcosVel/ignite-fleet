@@ -1,11 +1,7 @@
 import styled from "styled-components/native";
+import theme from "../../theme";
 
 export const Container = styled.View`
   flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const Title = styled.Text`
-  color: white;
+  background-color: ${theme.COLORS.GRAY_800};
 `;

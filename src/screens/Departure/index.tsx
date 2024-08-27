@@ -1,10 +1,11 @@
 import React from "react";
-import { Container, Title } from "./styles";
+import { Header } from "../../components";
+import { Container } from "./styles";
 
 export default function Departure() {
   return (
     <Container>
-      <Title>index</Title>
+      <Header title="Saída" />
     </Container>
   );
 }
