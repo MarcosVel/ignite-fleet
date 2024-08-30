@@ -1,17 +1,21 @@
-import React from "react";
-import { TextInputProps } from "react-native";
+import React, { forwardRef } from "react";
+import { TextInput, TextInputProps } from "react-native";
 import { Container, Input, Label } from "./styles";
 
 type Props = TextInputProps & {
   label: string;
 };
 
-export default function TextAreaInput({ label, ...rest }: Props) {
-  return (
-    <Container>
-      <Label>{label}</Label>
+const TextAreaInput = forwardRef<TextInput, Props>(
+  ({ label, ...rest }, ref) => {
+    return (
+      <Container>
+        <Label>{label}</Label>
 
-      <Input multiline autoCapitalize="sentences" {...rest} />
-    </Container>
-  );
-}
+        <Input ref={ref} multiline autoCapitalize="sentences" {...rest} />
+      </Container>
+    );
+  }
+);
+
+export default TextAreaInput;
