@@ -10,6 +10,9 @@ import {
   LicensePlate,
 } from "./styles";
 import { X } from "phosphor-react-native";
+import { useObject } from "../../libs/realm";
+import { Historic } from "../../libs/realm/schemas/Historic";
+import { BSON } from "realm";
 
 type RouteParamsProps = {
   id: string;
@@ -18,8 +21,7 @@ type RouteParamsProps = {
 export default function Arrival() {
   const { params } = useRoute();
   const { id } = params as RouteParamsProps;
-
-  console.log(id);
+  const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
 
   return (
     <Container>
@@ -27,15 +29,10 @@ export default function Arrival() {
 
       <Content>
         <Label>Placa do veículo</Label>
-        <LicensePlate>XXX0000</LicensePlate>
+        <LicensePlate>{historic?.license_plate}</LicensePlate>
 
         <Label>Finalidade</Label>
-        <Description>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit
-          perferendis sapiente officiis odio dolorum placeat, distinctio
-          facilis. Iusto nemo, voluptatibus beatae temporibus, quis, neque
-          tenetur hic numquam aut magni iure!
-        </Description>
+        <Description>{historic?.description}</Description>
 
         <Footer>
           <ButtonIcon icon={X} />
