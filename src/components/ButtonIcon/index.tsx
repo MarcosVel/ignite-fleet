@@ -14,7 +14,7 @@ export default function ButtonIcon({ icon: Icon, ...rest }: Props) {
   const { COLORS } = useTheme();
 
   return (
-    <Container activeOpacity={0.5}>
+    <Container activeOpacity={0.5} {...rest}>
       <Icon size={24} color={COLORS.BRAND_MID} />
     </Container>
   );

@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import { CarStatus, HomeHeader } from "../../components";
-import { useQuery } from "../../libs/realm";
+import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content } from "./styles";
-import { Alert } from "react-native";
 
 export default function Home() {
+  const realm = useRealm();
   const { navigate } = useNavigation();
 
   const [vehicleInUse, setVehicleInUse] = useState<Historic | null>(null);
@@ -21,7 +22,7 @@ export default function Home() {
     navigate("departure");
   }
 
-  function fetchVehicle() {
+  function fetchVehicleInUse() {
     console.log(historic);
 
     try {
@@ -37,7 +38,11 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetchVehicle();
+    fetchVehicleInUse();
+
+    realm.addListener("change", () => fetchVehicleInUse());
+
+    return () => realm.removeListener("change", fetchVehicleInUse);
   }, []);
 
   return (
