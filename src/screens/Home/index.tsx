@@ -14,6 +14,10 @@ export default function Home() {
   const historic = useQuery(Historic);
 
   function handleRegisterMovement() {
+    if (vehicleInUse?._id) {
+      return navigate("arrival", { id: vehicleInUse._id.toString() });
+    }
+
     navigate("departure");
   }
 
