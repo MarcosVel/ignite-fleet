@@ -12,12 +12,12 @@ export default function Home() {
   const realm = useRealm();
   const { navigate } = useNavigation();
 
+  const historic = useQuery(Historic);
+
   const [vehicleInUse, setVehicleInUse] = useState<Historic | null>(null);
   const [vehicleHistoric, setVehicleHistoric] = useState<HistoricCardProps[]>(
     []
   );
-
-  const historic = useQuery(Historic);
 
   function handleRegisterMovement() {
     if (vehicleInUse?._id) {
@@ -69,6 +69,10 @@ export default function Home() {
     }
   }
 
+  function handleHistoricDetails(id: string) {
+    navigate("arrival", { id });
+  }
+
   useEffect(() => {
     fetchVehicleInUse();
 
@@ -94,7 +98,12 @@ export default function Home() {
         <FlatList
           data={vehicleHistoric}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoricCard data={item} />}
+          renderItem={({ item }) => (
+            <HistoricCard
+              data={item}
+              onPress={() => handleHistoricDetails(item.id)}
+            />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 96 }}
           ListHeaderComponent={() => <Label>Histórico</Label>}

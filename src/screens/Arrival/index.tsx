@@ -24,7 +24,10 @@ export default function Arrival() {
   const { params } = useRoute();
   const { goBack } = useNavigation();
   const { id } = params as RouteParamsProps;
+
   const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
+
+  const title = historic?.status === "arrival" ? "Chegada" : "Detalhes";
 
   function handleRemoveVehicleUsage() {
     Alert.alert("Cancelar", "Deseja cancelar a utilização do veículo?", [
@@ -69,7 +72,7 @@ export default function Arrival() {
 
   return (
     <Container>
-      <Header title="Chegada" />
+      <Header title={title} />
 
       <Content>
         <Label>Placa do veículo</Label>
@@ -78,11 +81,13 @@ export default function Arrival() {
         <Label>Finalidade</Label>
         <Description>{historic?.description}</Description>
 
-        <Footer>
-          <ButtonIcon icon={X} onPress={handleRemoveVehicleUsage} />
+        {historic?.status === "departure" && (
+          <Footer>
+            <ButtonIcon icon={X} onPress={handleRemoveVehicleUsage} />
 
-          <Button title="Registrar Chegada" onPress={handleArrivalRegister} />
-        </Footer>
+            <Button title="Registrar Chegada" onPress={handleArrivalRegister} />
+          </Footer>
+        )}
       </Content>
     </Container>
   );
