@@ -14,7 +14,9 @@ export const Label = styled.Text`
   font-family: ${theme.FONT_FAMILY.REGULAR};
 `;
 
-export const Input = styled.TextInput`
+export const Input = styled.TextInput.attrs(() => {
+  return {};
+})`
   color: ${theme.COLORS.GRAY_200};
   font-size: ${theme.FONT_SIZE.XXXL}px;
   font-family: ${theme.FONT_FAMILY.BOLD};
