@@ -1,16 +1,21 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, FlatList, View } from "react-native";
 import { CarStatus, HistoricCard, HomeHeader } from "../../components";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
-import { Container, Content } from "./styles";
+import { Container, Content, EmptyList, Label } from "./styles";
+import dayjs from "dayjs";
+import { HistoricCardProps } from "../../components/HistoricCard";
 
 export default function Home() {
   const realm = useRealm();
   const { navigate } = useNavigation();
 
   const [vehicleInUse, setVehicleInUse] = useState<Historic | null>(null);
+  const [vehicleHistoric, setVehicleHistoric] = useState<HistoricCardProps[]>(
+    []
+  );
 
   const historic = useQuery(Historic);
 
@@ -38,10 +43,30 @@ export default function Home() {
   }
 
   function fetchHistory() {
-    const response = historic.filtered(
-      "status = 'arrival' SORT(create_at DESC)"
-    );
-    console.log("fetchHistory", response);
+    try {
+      const response = historic.filtered(
+        "status = 'arrival' SORT(create_at DESC)"
+      );
+
+      const historicFormatted = response.map((item) => {
+        return {
+          id: item._id.toString(),
+          licensePlate: item.license_plate,
+          created: dayjs(item.create_at).format(
+            "[Saída em] DD/MM/YYYY [às] HH:mm"
+          ),
+          isSync: false,
+        };
+      });
+
+      setVehicleHistoric(historicFormatted);
+    } catch (error) {
+      console.error(error);
+      Alert.alert(
+        "Erro no Histórico",
+        "Não foi possível carregar o histórico."
+      );
+    }
   }
 
   useEffect(() => {
@@ -66,8 +91,17 @@ export default function Home() {
           licensePlate={vehicleInUse?.license_plate}
         />
 
-        <HistoricCard
-          data={{ created: "20/04", licensePlate: "XXX2121", isSync: false }}
+        <FlatList
+          data={vehicleHistoric}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <HistoricCard data={item} />}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 96 }}
+          ListHeaderComponent={() => <Label>Histórico</Label>}
+          ListHeaderComponentStyle={{ marginBottom: 12 }}
+          ListEmptyComponent={() => (
+            <EmptyList>Nenhum veículo utilizado</EmptyList>
+          )}
         />
       </Content>
     </Container>
