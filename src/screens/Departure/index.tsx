@@ -6,6 +6,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  ToastAndroid,
   TouchableWithoutFeedback,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -66,7 +67,7 @@ export default function Departure() {
         );
       });
 
-      Alert.alert("Saída registrada!", "Veículo registrado com sucesso.");
+      ToastAndroid.show("Saída registrada!", ToastAndroid.SHORT);
       goBack();
     } catch (error) {
       console.error(error);

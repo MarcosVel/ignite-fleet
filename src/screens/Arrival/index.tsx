@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { X } from "phosphor-react-native";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, ToastAndroid } from "react-native";
 import { BSON } from "realm";
 import { Button, ButtonIcon, Header } from "../../components";
 import { useObject, useRealm } from "../../libs/realm";
@@ -40,6 +40,8 @@ export default function Arrival() {
     realm.write(() => {
       realm.delete(historic);
     });
+
+    ToastAndroid.show("Utilização cancelada!", ToastAndroid.SHORT);
 
     goBack();
   }

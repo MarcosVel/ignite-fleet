@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { Alert, FlatList, View } from "react-native";
+import { Alert, FlatList } from "react-native";
 import { CarStatus, HistoricCard, HomeHeader } from "../../components";
+import { HistoricCardProps } from "../../components/HistoricCard";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
-import dayjs from "dayjs";
-import { HistoricCardProps } from "../../components/HistoricCard";
 
 export default function Home() {
   const realm = useRealm();
@@ -78,7 +78,10 @@ export default function Home() {
 
     realm.addListener("change", () => fetchVehicleInUse());
 
-    return () => realm.removeListener("change", fetchVehicleInUse);
+    return () => {
+      if (realm && !realm.isClosed)
+        realm.removeListener("change", fetchVehicleInUse);
+    };
   }, []);
 
   useEffect(() => {
