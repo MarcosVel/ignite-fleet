@@ -7,9 +7,11 @@ import { HistoricCardProps } from "../../components/HistoricCard";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
+import { useUser } from "@realm/react";
 
 export default function Home() {
   const realm = useRealm();
+  const { id } = useUser();
   const { navigate } = useNavigation();
 
   const historic = useQuery(Historic);
@@ -88,6 +90,16 @@ export default function Home() {
     fetchHistory();
   }, [historic]);
 
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs, realm) => {
+      const historicByUserQuery = realm
+        .objects("Historic")
+        .filtered(`user_id = '${id}'`);
+
+      mutableSubs.add(historicByUserQuery, { name: "historic_by_user" });
+    });
+  }, [realm]);
+
   return (
     <Container>
       <HomeHeader />
@@ -108,9 +120,8 @@ export default function Home() {
             />
           )}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 96 }}
+          contentContainerStyle={{ paddingBottom: 96, gap: 16 }}
           ListHeaderComponent={() => <Label>Histórico</Label>}
-          ListHeaderComponentStyle={{ marginBottom: 12 }}
           ListEmptyComponent={() => (
             <EmptyList>Nenhum veículo utilizado</EmptyList>
           )}
