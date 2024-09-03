@@ -2,10 +2,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { Alert, FlatList } from "react-native";
+import { Alert, FlatList, ToastAndroid } from "react-native";
 import { ProgressDirection, ProgressMode } from "realm";
 import { CarStatus, HistoricCard, HomeHeader } from "../../components";
 import { HistoricCardProps } from "../../components/HistoricCard";
+import {
+  getLastSyncTimestamp,
+  saveLastSyncTimestamp,
+} from "../../libs/asyncStorage/syncStorage";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
@@ -45,11 +49,13 @@ export default function Home() {
     }
   }
 
-  function fetchHistory() {
+  async function fetchHistory() {
     try {
       const response = historic.filtered(
         "status = 'arrival' SORT(create_at DESC)"
       );
+
+      const lastSync = await getLastSyncTimestamp();
 
       const historicFormatted = response.map((item) => {
         return {
@@ -58,7 +64,7 @@ export default function Home() {
           created: dayjs(item.create_at).format(
             "[Saída em] DD/MM/YYYY [às] HH:mm"
           ),
-          isSync: false,
+          isSync: lastSync > item.update_at.getTime(),
         };
       });
 
@@ -76,13 +82,22 @@ export default function Home() {
     navigate("arrival", { id });
   }
 
-  function progressNotification(transferred: number, transferable: number) {
+  async function progressNotification(
+    transferred: number,
+    transferable: number
+  ) {
     const transferredString = transferred.toString().slice(0, -1);
     const transferableString = transferable.toString().slice(0, -1);
 
     const percentage =
       (Number(transferredString) / Number(transferableString)) * 100;
-    console.log("percentage =>", `${percentage}%`);
+
+    if (percentage === 100) {
+      await saveLastSyncTimestamp();
+      fetchHistory();
+
+      ToastAndroid.show("Dados sincronizados!", ToastAndroid.SHORT);
+    }
   }
 
   useEffect(() => {
