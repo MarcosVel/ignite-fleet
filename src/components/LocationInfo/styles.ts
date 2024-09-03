@@ -6,6 +6,7 @@ export const Container = styled.View`
   width: 100%;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 `;
 
 export const Info = styled.View`

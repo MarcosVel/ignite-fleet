@@ -6,6 +6,7 @@ import {
   useForegroundPermissions,
   watchPositionAsync,
 } from "expo-location";
+import { Car } from "phosphor-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -152,6 +153,7 @@ export default function Departure() {
             <Content>
               {currentAddress && (
                 <LocationInfo
+                  icon={Car}
                   label="Localização atual"
                   address={currentAddress}
                 />
