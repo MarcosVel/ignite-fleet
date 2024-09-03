@@ -21,6 +21,7 @@ import {
   Header,
   LicensePlateInput,
   Loading,
+  LocationInfo,
   TextAreaInput,
 } from "../../components";
 import { useRealm } from "../../libs/realm";
@@ -43,6 +44,7 @@ export default function Departure() {
   });
   const [isRegistering, setIsRegistering] = useState(false);
   const [isLoadingLoc, setIsLoadingLoc] = useState(true);
+  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
 
   const [locForegroundPermission, reqLocForegroundPermission] =
     useForegroundPermissions();
@@ -106,7 +108,10 @@ export default function Departure() {
 
         getAddressLocation(location.coords)
           .then((address) => {
-            console.log(address);
+            if (address) {
+              console.log(address);
+              setCurrentAddress(address);
+            }
           })
           .finally(() => setIsLoadingLoc(false));
       }
@@ -145,6 +150,13 @@ export default function Departure() {
         <KeyboardAwareScrollView extraHeight={100}>
           <ScrollView>
             <Content>
+              {currentAddress && (
+                <LocationInfo
+                  label="Localização atual"
+                  address={currentAddress}
+                />
+              )}
+
               <LicensePlateInput
                 ref={licensePlateRef}
                 label="Placa do veículo"
