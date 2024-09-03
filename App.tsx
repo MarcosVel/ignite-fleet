@@ -10,7 +10,7 @@ import { AppProvider, UserProvider } from "@realm/react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components/native";
-import { Loading } from "./src/components";
+import { Loading, TopMessage } from "./src/components";
 import { RealmProvider, syncConfig } from "./src/libs/realm";
 import { Routes } from "./src/routes";
 import { SignIn } from "./src/screens";
@@ -28,6 +28,9 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <SafeAreaProvider style={{ backgroundColor: theme.COLORS.GRAY_800 }}>
           <StatusBar style="light" backgroundColor="transparent" translucent />
+
+          <TopMessage />
+
           <UserProvider fallback={SignIn}>
             <RealmProvider
               sync={{
