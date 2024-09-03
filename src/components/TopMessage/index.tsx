@@ -1,10 +1,15 @@
-import { WifiSlash } from "phosphor-react-native";
 import React from "react";
-import { useTheme } from "styled-components";
-import { Container, Title } from "./styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "styled-components";
+import { IconBoxProps } from "../ButtonIcon";
+import { Container, Title } from "./styles";
 
-export default function TopMessage() {
+type Props = {
+  icon?: IconBoxProps;
+  title: string;
+};
+
+export default function TopMessage({ icon: Icon, title }: Props) {
   const { COLORS } = useTheme();
   const { top } = useSafeAreaInsets();
 
@@ -12,8 +17,8 @@ export default function TopMessage() {
 
   return (
     <Container style={{ paddingTop }}>
-      <WifiSlash size={18} color={COLORS.GRAY_100} />
-      <Title>Você está off-line</Title>
+      {Icon && <Icon size={18} color={COLORS.GRAY_100} />}
+      <Title>{title}</Title>
     </Container>
   );
 }

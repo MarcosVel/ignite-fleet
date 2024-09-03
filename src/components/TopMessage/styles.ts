@@ -13,7 +13,7 @@ export const Container = styled.View`
   background-color: ${theme.COLORS.GRAY_500};
   padding-bottom: 6px;
   /* top: 100px; */
-  gap: 2px;
+  gap: 4px;
   z-index: 2;
 `;
 

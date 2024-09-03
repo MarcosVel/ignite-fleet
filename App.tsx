@@ -9,6 +9,7 @@ import {
 import { useNetInfo } from "@react-native-community/netinfo";
 import { AppProvider, UserProvider } from "@realm/react";
 import { StatusBar } from "expo-status-bar";
+import { WifiSlash } from "phosphor-react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components/native";
 import { Loading, TopMessage } from "./src/components";
@@ -31,7 +32,9 @@ export default function App() {
         <SafeAreaProvider style={{ backgroundColor: theme.COLORS.GRAY_800 }}>
           <StatusBar style="light" backgroundColor="transparent" translucent />
 
-          {!netInfo.isConnected && <TopMessage />}
+          {!netInfo.isConnected && (
+            <TopMessage icon={WifiSlash} title="Você está off-line" />
+          )}
 
           <UserProvider fallback={SignIn}>
             <RealmProvider
