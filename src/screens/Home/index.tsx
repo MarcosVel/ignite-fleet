@@ -1,13 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from "@realm/react";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList } from "react-native";
+import { ProgressDirection, ProgressMode } from "realm";
 import { CarStatus, HistoricCard, HomeHeader } from "../../components";
 import { HistoricCardProps } from "../../components/HistoricCard";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
-import { useUser } from "@realm/react";
 
 export default function Home() {
   const realm = useRealm();
@@ -75,6 +76,15 @@ export default function Home() {
     navigate("arrival", { id });
   }
 
+  function progressNotification(transferred: number, transferable: number) {
+    const transferredString = transferred.toString().slice(0, -1);
+    const transferableString = transferable.toString().slice(0, -1);
+
+    const percentage =
+      (Number(transferredString) / Number(transferableString)) * 100;
+    console.log("percentage =>", `${percentage}%`);
+  }
+
   useEffect(() => {
     fetchVehicleInUse();
 
@@ -98,6 +108,20 @@ export default function Home() {
 
       mutableSubs.add(historicByUserQuery, { name: "historic_by_user" });
     });
+  }, [realm]);
+
+  useEffect(() => {
+    const syncSession = realm.syncSession;
+
+    if (!syncSession) return;
+
+    syncSession.addProgressNotification(
+      ProgressDirection.Upload,
+      ProgressMode.ReportIndefinitely,
+      progressNotification
+    );
+
+    return () => syncSession.removeProgressNotification(progressNotification);
   }, [realm]);
 
   return (
