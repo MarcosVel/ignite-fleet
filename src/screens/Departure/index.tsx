@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -19,7 +19,8 @@ import {
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
-import { Container, Content } from "./styles";
+import { Container, Content, Message } from "./styles";
+import { useForegroundPermissions } from "expo-location";
 
 export default function Departure() {
   const realm = useRealm();
@@ -35,6 +36,9 @@ export default function Departure() {
     description: "",
   });
   const [isRegistering, setIsRegistering] = useState(false);
+
+  const [locForegroundPermission, reqLocForegroundPermission] =
+    useForegroundPermissions();
 
   function handleDeparture() {
     try {
@@ -74,6 +78,24 @@ export default function Departure() {
       Alert.alert("Ops!", "Ocorreu um erro ao registrar a saída.");
       setIsRegistering(false);
     }
+  }
+
+  useEffect(() => {
+    reqLocForegroundPermission();
+  }, []);
+
+  if (!locForegroundPermission?.granted) {
+    return (
+      <Container>
+        <Header title="Saída" />
+
+        <Message>
+          {
+            "Você precisa permitir que o aplicativo tenha acesso a localização para utilizar essa funcionalidade.\nPor favor, acesse as configurações do seu aplicativo para conceder essa permissão ao aplicativo."
+          }
+        </Message>
+      </Container>
+    );
   }
 
   return (
