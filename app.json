@@ -32,6 +32,12 @@
           "iosUrlScheme": "com.googleusercontent.apps.779741084327-d70ui05qvq45bd1ggg058frmc46o4iqk"
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
       "expo-font"
     ]
   }

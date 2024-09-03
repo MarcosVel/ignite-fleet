@@ -1,6 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
-import React, { useRef, useState } from "react";
+import {
+  LocationAccuracy,
+  LocationSubscription,
+  useForegroundPermissions,
+  watchPositionAsync,
+} from "expo-location";
+import { Car } from "phosphor-react-native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -14,12 +21,14 @@ import {
   Button,
   Header,
   LicensePlateInput,
+  Loading,
+  LocationInfo,
   TextAreaInput,
 } from "../../components";
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
-import { licensePlateValidate } from "../../utils/licensePlateValidate";
-import { Container, Content } from "./styles";
+import { getAddressLocation, licensePlateValidate } from "../../utils";
+import { Container, Content, Message } from "./styles";
 
 export default function Departure() {
   const realm = useRealm();
@@ -35,6 +44,11 @@ export default function Departure() {
     description: "",
   });
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isLoadingLoc, setIsLoadingLoc] = useState(true);
+  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
+
+  const [locForegroundPermission, reqLocForegroundPermission] =
+    useForegroundPermissions();
 
   function handleDeparture() {
     try {
@@ -76,6 +90,59 @@ export default function Departure() {
     }
   }
 
+  useEffect(() => {
+    reqLocForegroundPermission();
+  }, []);
+
+  useEffect(() => {
+    if (!locForegroundPermission?.granted) return;
+
+    let subscription: LocationSubscription;
+
+    watchPositionAsync(
+      {
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+      },
+      (location) => {
+        console.log("location", location);
+
+        getAddressLocation(location.coords)
+          .then((address) => {
+            if (address) {
+              console.log(address);
+              setCurrentAddress(address);
+            }
+          })
+          .finally(() => setIsLoadingLoc(false));
+      }
+    ).then((response) => (subscription = response));
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
+  }, [locForegroundPermission]);
+
+  if (!locForegroundPermission?.granted) {
+    return (
+      <Container>
+        <Header title="Saída" />
+
+        <Message>
+          {
+            "Você precisa permitir que o aplicativo tenha acesso a localização para utilizar essa funcionalidade.\nPor favor, acesse as configurações do seu aplicativo para conceder essa permissão ao aplicativo."
+          }
+        </Message>
+      </Container>
+    );
+  }
+
+  if (isLoadingLoc) {
+    return <Loading />;
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <Container>
@@ -84,6 +151,14 @@ export default function Departure() {
         <KeyboardAwareScrollView extraHeight={100}>
           <ScrollView>
             <Content>
+              {currentAddress && (
+                <LocationInfo
+                  icon={Car}
+                  label="Localização atual"
+                  address={currentAddress}
+                />
+              )}
+
               <LicensePlateInput
                 ref={licensePlateRef}
                 label="Placa do veículo"
