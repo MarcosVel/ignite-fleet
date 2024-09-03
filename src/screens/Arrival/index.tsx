@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { X } from "phosphor-react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
 import { BSON } from "realm";
 import { Button, ButtonIcon, Header } from "../../components";
@@ -13,7 +13,9 @@ import {
   Footer,
   Label,
   LicensePlate,
+  SyncMessage,
 } from "./styles";
+import { getLastSyncTimestamp } from "../../libs/asyncStorage/syncStorage";
 
 type RouteParamsProps = {
   id: string;
@@ -24,6 +26,8 @@ export default function Arrival() {
   const { params } = useRoute();
   const { goBack } = useNavigation();
   const { id } = params as RouteParamsProps;
+
+  const [dataNotSynced, setDataNotSynced] = useState(false);
 
   const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
 
@@ -72,6 +76,12 @@ export default function Arrival() {
     }
   }
 
+  useEffect(() => {
+    getLastSyncTimestamp().then((lastSync) =>
+      setDataNotSynced(historic!.update_at.getTime() > lastSync)
+    );
+  }, []);
+
   return (
     <Container>
       <Header title={title} />
@@ -82,6 +92,8 @@ export default function Arrival() {
 
         <Label>Finalidade</Label>
         <Description>{historic?.description}</Description>
+
+        {dataNotSynced && <SyncMessage>Sincronização pendente</SyncMessage>}
 
         {historic?.status === "departure" && (
           <Footer>
