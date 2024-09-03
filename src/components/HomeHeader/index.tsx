@@ -19,7 +19,7 @@ export default function HomeHeader() {
   const app = useApp();
   const insets = useSafeAreaInsets();
 
-  const paddingTop = insets.top + 20;
+  const paddingTop = insets.top + 32;
 
   function handleLogout() {
     GoogleSignin.signOut();

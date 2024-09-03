@@ -1,15 +1,28 @@
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from "@realm/react";
 import dayjs from "dayjs";
+import { CloudArrowUp } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
-import { Alert, FlatList } from "react-native";
-import { CarStatus, HistoricCard, HomeHeader } from "../../components";
+import { Alert, FlatList, ToastAndroid } from "react-native";
+import { ProgressDirection, ProgressMode } from "realm";
+import {
+  CarStatus,
+  HistoricCard,
+  HomeHeader,
+  TopMessage,
+} from "../../components";
 import { HistoricCardProps } from "../../components/HistoricCard";
+import {
+  getLastSyncTimestamp,
+  saveLastSyncTimestamp,
+} from "../../libs/asyncStorage/syncStorage";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
 
 export default function Home() {
   const realm = useRealm();
+  const { id } = useUser();
   const { navigate } = useNavigation();
 
   const historic = useQuery(Historic);
@@ -18,6 +31,7 @@ export default function Home() {
   const [vehicleHistoric, setVehicleHistoric] = useState<HistoricCardProps[]>(
     []
   );
+  const [percentageToSync, setPercentageToSync] = useState<string | null>(null);
 
   function handleRegisterMovement() {
     if (vehicleInUse?._id) {
@@ -42,11 +56,13 @@ export default function Home() {
     }
   }
 
-  function fetchHistory() {
+  async function fetchHistory() {
     try {
       const response = historic.filtered(
         "status = 'arrival' SORT(create_at DESC)"
       );
+
+      const lastSync = await getLastSyncTimestamp();
 
       const historicFormatted = response.map((item) => {
         return {
@@ -55,7 +71,7 @@ export default function Home() {
           created: dayjs(item.create_at).format(
             "[Saída em] DD/MM/YYYY [às] HH:mm"
           ),
-          isSync: false,
+          isSync: lastSync > item.update_at.getTime(),
         };
       });
 
@@ -73,6 +89,29 @@ export default function Home() {
     navigate("arrival", { id });
   }
 
+  async function progressNotification(
+    transferred: number,
+    transferable: number
+  ) {
+    const transferredString = transferred.toString().slice(0, -1);
+    const transferableString = transferable.toString().slice(0, -1);
+
+    const percentage =
+      (Number(transferredString) / Number(transferableString)) * 100;
+
+    if (percentage === 100) {
+      await saveLastSyncTimestamp();
+      await fetchHistory();
+      setPercentageToSync(null);
+
+      return ToastAndroid.show("Dados sincronizados!", ToastAndroid.SHORT);
+    }
+
+    if (percentage < 100) {
+      setPercentageToSync(`${percentage.toFixed(0)}% sincronizado.`);
+    }
+  }
+
   useEffect(() => {
     fetchVehicleInUse();
 
@@ -88,9 +127,37 @@ export default function Home() {
     fetchHistory();
   }, [historic]);
 
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs, realm) => {
+      const historicByUserQuery = realm
+        .objects("Historic")
+        .filtered(`user_id = '${id}'`);
+
+      mutableSubs.add(historicByUserQuery, { name: "historic_by_user" });
+    });
+  }, [realm]);
+
+  useEffect(() => {
+    const syncSession = realm.syncSession;
+
+    if (!syncSession) return;
+
+    syncSession.addProgressNotification(
+      ProgressDirection.Upload,
+      ProgressMode.ReportIndefinitely,
+      progressNotification
+    );
+
+    return () => syncSession.removeProgressNotification(progressNotification);
+  }, []);
+
   return (
     <Container>
       <HomeHeader />
+
+      {percentageToSync && (
+        <TopMessage title={percentageToSync} icon={CloudArrowUp} />
+      )}
 
       <Content>
         <CarStatus
@@ -108,9 +175,8 @@ export default function Home() {
             />
           )}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 96 }}
+          contentContainerStyle={{ paddingBottom: 96, gap: 16 }}
           ListHeaderComponent={() => <Label>Histórico</Label>}
-          ListHeaderComponentStyle={{ marginBottom: 12 }}
           ListEmptyComponent={() => (
             <EmptyList>Nenhum veículo utilizado</EmptyList>
           )}

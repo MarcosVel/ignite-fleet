@@ -6,17 +6,20 @@ import {
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { AppProvider, UserProvider } from "@realm/react";
 import { StatusBar } from "expo-status-bar";
+import { WifiSlash } from "phosphor-react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components/native";
-import { Loading } from "./src/components";
-import { RealmProvider } from "./src/libs/realm";
+import { Loading, TopMessage } from "./src/components";
+import { RealmProvider, syncConfig } from "./src/libs/realm";
 import { Routes } from "./src/routes";
 import { SignIn } from "./src/screens";
 import theme from "./src/theme";
 
 export default function App() {
+  const netInfo = useNetInfo();
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
 
   if (!fontsLoaded) {
@@ -28,8 +31,24 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <SafeAreaProvider style={{ backgroundColor: theme.COLORS.GRAY_800 }}>
           <StatusBar style="light" backgroundColor="transparent" translucent />
+
+          {!netInfo.isConnected && (
+            <TopMessage icon={WifiSlash} title="Você está off-line" />
+          )}
+
           <UserProvider fallback={SignIn}>
-            <RealmProvider>
+            <RealmProvider
+              sync={{
+                ...syncConfig,
+                initialSubscriptions: {
+                  update(subs, realm) {
+                    subs.add(realm.objects("Historic"));
+                  },
+                  rerunOnOpen: true,
+                },
+              }}
+              fallback={Loading}
+            >
               <Routes />
             </RealmProvider>
           </UserProvider>
