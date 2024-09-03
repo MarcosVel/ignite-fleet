@@ -1,10 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
 import dayjs from "dayjs";
+import { CloudArrowUp } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, ToastAndroid } from "react-native";
 import { ProgressDirection, ProgressMode } from "realm";
-import { CarStatus, HistoricCard, HomeHeader } from "../../components";
+import {
+  CarStatus,
+  HistoricCard,
+  HomeHeader,
+  TopMessage,
+} from "../../components";
 import { HistoricCardProps } from "../../components/HistoricCard";
 import {
   getLastSyncTimestamp,
@@ -25,6 +31,7 @@ export default function Home() {
   const [vehicleHistoric, setVehicleHistoric] = useState<HistoricCardProps[]>(
     []
   );
+  const [percentageToSync, setPercentageToSync] = useState<string | null>(null);
 
   function handleRegisterMovement() {
     if (vehicleInUse?._id) {
@@ -94,9 +101,14 @@ export default function Home() {
 
     if (percentage === 100) {
       await saveLastSyncTimestamp();
-      fetchHistory();
+      await fetchHistory();
+      setPercentageToSync(null);
 
-      ToastAndroid.show("Dados sincronizados!", ToastAndroid.SHORT);
+      return ToastAndroid.show("Dados sincronizados!", ToastAndroid.SHORT);
+    }
+
+    if (percentage < 100) {
+      setPercentageToSync(`${percentage.toFixed(0)}% sincronizado.`);
     }
   }
 
@@ -137,11 +149,15 @@ export default function Home() {
     );
 
     return () => syncSession.removeProgressNotification(progressNotification);
-  }, [realm]);
+  }, []);
 
   return (
     <Container>
       <HomeHeader />
+
+      {percentageToSync && (
+        <TopMessage title={percentageToSync} icon={CloudArrowUp} />
+      )}
 
       <Content>
         <CarStatus
