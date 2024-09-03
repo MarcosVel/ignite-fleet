@@ -1,5 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
+import {
+  LocationAccuracy,
+  LocationSubscription,
+  useForegroundPermissions,
+  watchPositionAsync,
+} from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -20,7 +26,6 @@ import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
 import { Container, Content, Message } from "./styles";
-import { useForegroundPermissions } from "expo-location";
 
 export default function Departure() {
   const realm = useRealm();
@@ -83,6 +88,24 @@ export default function Departure() {
   useEffect(() => {
     reqLocForegroundPermission();
   }, []);
+
+  useEffect(() => {
+    if (!locForegroundPermission?.granted) return;
+
+    let subscription: LocationSubscription;
+
+    watchPositionAsync(
+      {
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+      },
+      (location) => {
+        console.log("location", location);
+      }
+    ).then((response) => (subscription = response));
+
+    return () => subscription.remove();
+  }, [locForegroundPermission]);
 
   if (!locForegroundPermission?.granted) {
     return (
