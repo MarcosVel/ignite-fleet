@@ -24,8 +24,8 @@ import {
 } from "../../components";
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
-import { licensePlateValidate } from "../../utils/licensePlateValidate";
 import { Container, Content, Message } from "./styles";
+import { getAddressLocation, licensePlateValidate } from "../../utils";
 
 export default function Departure() {
   const realm = useRealm();
@@ -101,6 +101,10 @@ export default function Departure() {
       },
       (location) => {
         console.log("location", location);
+
+        getAddressLocation(location.coords).then((address) => {
+          console.log(address);
+        });
       }
     ).then((response) => (subscription = response));
 
