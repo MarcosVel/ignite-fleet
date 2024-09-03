@@ -20,12 +20,13 @@ import {
   Button,
   Header,
   LicensePlateInput,
+  Loading,
   TextAreaInput,
 } from "../../components";
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
-import { Container, Content, Message } from "./styles";
 import { getAddressLocation, licensePlateValidate } from "../../utils";
+import { Container, Content, Message } from "./styles";
 
 export default function Departure() {
   const realm = useRealm();
@@ -41,6 +42,7 @@ export default function Departure() {
     description: "",
   });
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isLoadingLoc, setIsLoadingLoc] = useState(true);
 
   const [locForegroundPermission, reqLocForegroundPermission] =
     useForegroundPermissions();
@@ -102,13 +104,19 @@ export default function Departure() {
       (location) => {
         console.log("location", location);
 
-        getAddressLocation(location.coords).then((address) => {
-          console.log(address);
-        });
+        getAddressLocation(location.coords)
+          .then((address) => {
+            console.log(address);
+          })
+          .finally(() => setIsLoadingLoc(false));
       }
     ).then((response) => (subscription = response));
 
-    return () => subscription.remove();
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, [locForegroundPermission]);
 
   if (!locForegroundPermission?.granted) {
@@ -123,6 +131,10 @@ export default function Departure() {
         </Message>
       </Container>
     );
+  }
+
+  if (isLoadingLoc) {
+    return <Loading />;
   }
 
   return (
