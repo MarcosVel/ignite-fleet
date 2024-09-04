@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
 import {
   LocationAccuracy,
+  LocationObjectCoords,
   LocationSubscription,
   useForegroundPermissions,
   watchPositionAsync,
@@ -23,6 +24,7 @@ import {
   LicensePlateInput,
   Loading,
   LocationInfo,
+  Map,
   TextAreaInput,
 } from "../../components";
 import { useRealm } from "../../libs/realm";
@@ -46,6 +48,8 @@ export default function Departure() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isLoadingLoc, setIsLoadingLoc] = useState(true);
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
+  const [currentCoords, setCurrentCoords] =
+    useState<LocationObjectCoords | null>(null);
 
   const [locForegroundPermission, reqLocForegroundPermission] =
     useForegroundPermissions();
@@ -107,6 +111,8 @@ export default function Departure() {
       (location) => {
         console.log("location", location);
 
+        setCurrentCoords(location.coords);
+
         getAddressLocation(location.coords)
           .then((address) => {
             if (address) {
@@ -150,6 +156,8 @@ export default function Departure() {
 
         <KeyboardAwareScrollView extraHeight={100}>
           <ScrollView>
+            {currentCoords && <Map coordinates={[currentCoords]} />}
+
             <Content>
               {currentAddress && (
                 <LocationInfo
