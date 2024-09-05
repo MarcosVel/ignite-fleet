@@ -46,10 +46,12 @@ export default function Arrival() {
     ]);
   }
 
-  function removeVehicleUsage() {
+  async function removeVehicleUsage() {
     realm.write(() => {
       realm.delete(historic);
     });
+
+    await stopLocationTask();
 
     ToastAndroid.show("Utilização cancelada!", ToastAndroid.SHORT);
 
@@ -65,12 +67,12 @@ export default function Arrival() {
         );
       }
 
-      await stopLocationTask();
-
       realm.write(() => {
         historic.status = "arrival";
         historic.update_at = new Date();
       });
+
+      await stopLocationTask();
 
       Alert.alert(
         "Chegada registrada!",
