@@ -96,8 +96,19 @@ export default function Arrival() {
     const updatedAt = historic!.update_at.getTime();
     setDataNotSynced(updatedAt > lastSync);
 
-    const locationStorage = await getStorageLocations();
-    setCoordinates(locationStorage);
+    if (historic?.status === "departure") {
+      const locationStorage = await getStorageLocations();
+      setCoordinates(locationStorage);
+    } else {
+      const coordsOnDb = historic?.coords.map((coord) => {
+        return {
+          latitude: coord.latitude,
+          longitude: coord.longitude,
+          timestamp: coord.timestamp,
+        };
+      });
+      setCoordinates(coordsOnDb ?? []);
+    }
   }
 
   useEffect(() => {
