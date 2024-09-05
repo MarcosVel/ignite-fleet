@@ -19,7 +19,7 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "com.marcosveloso.ignitefleet",
       config: {
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+        googleMapsApiKey: process.env.GOOGLE_MAPS_IOS_API_KEY,
       },
       infoPlist: {
         UIBackgroundModes: ["location"],
@@ -43,7 +43,7 @@ module.exports = {
       ],
       config: {
         googleMaps: {
-          apiKey: process.env.GOOGLE_MAPS_API_KEY,
+          apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY,
         },
       },
     },
