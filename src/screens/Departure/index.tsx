@@ -32,6 +32,7 @@ import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { getAddressLocation, licensePlateValidate } from "../../utils";
 import { Container, Content, Message } from "./styles";
+import { startLocationTask } from "../../tasks/backgroundLocTask";
 
 export default function Departure() {
   const realm = useRealm();
@@ -93,6 +94,8 @@ export default function Departure() {
         );
       }
 
+      await startLocationTask();
+
       realm.write(() => {
         realm.create(
           "Historic",
@@ -135,7 +138,6 @@ export default function Departure() {
         getAddressLocation(location.coords)
           .then((address) => {
             if (address) {
-              console.log(address);
               setCurrentAddress(address);
             }
           })

@@ -42,8 +42,6 @@ export default function Home() {
   }
 
   function fetchVehicleInUse() {
-    console.log(historic);
-
     try {
       const vehicle = historic.filtered("status = 'departure'")[0];
       setVehicleInUse(vehicle);
