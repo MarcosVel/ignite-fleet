@@ -2,10 +2,16 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
+import { LatLng } from "react-native-maps";
 import { BSON } from "realm";
-import { Button, ButtonIcon, Header } from "../../components";
+import { Button, ButtonIcon, Header, Map } from "../../components";
+import {
+  getLastSyncTimestamp,
+  getStorageLocations,
+} from "../../libs/asyncStorage";
 import { useObject, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
+import { stopLocationTask } from "../../tasks/backgroundLocTask";
 import {
   Container,
   Content,
@@ -15,8 +21,6 @@ import {
   LicensePlate,
   SyncMessage,
 } from "./styles";
-import { getLastSyncTimestamp } from "../../libs/asyncStorage/syncStorage";
-import { stopLocationTask } from "../../tasks/backgroundLocTask";
 
 type RouteParamsProps = {
   id: string;
@@ -29,6 +33,7 @@ export default function Arrival() {
   const { id } = params as RouteParamsProps;
 
   const [dataNotSynced, setDataNotSynced] = useState(false);
+  const [coordinates, setCoordinates] = useState<LatLng[]>([]);
 
   const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
 
@@ -79,15 +84,24 @@ export default function Arrival() {
     }
   }
 
+  async function getLocationInfo() {
+    const lastSync = await getLastSyncTimestamp();
+    const updatedAt = historic!.update_at.getTime();
+    setDataNotSynced(updatedAt > lastSync);
+
+    const locationStorage = await getStorageLocations();
+    setCoordinates(locationStorage);
+  }
+
   useEffect(() => {
-    getLastSyncTimestamp().then((lastSync) =>
-      setDataNotSynced(historic!.update_at.getTime() > lastSync)
-    );
-  }, []);
+    getLocationInfo();
+  }, [historic]);
 
   return (
     <Container>
       <Header title={title} />
+
+      {coordinates.length > 0 && <Map coordinates={coordinates} />}
 
       <Content>
         <Label>Placa do veículo</Label>

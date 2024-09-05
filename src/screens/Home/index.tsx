@@ -15,7 +15,7 @@ import { HistoricCardProps } from "../../components/HistoricCard";
 import {
   getLastSyncTimestamp,
   saveLastSyncTimestamp,
-} from "../../libs/asyncStorage/syncStorage";
+} from "../../libs/asyncStorage";
 import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { Container, Content, EmptyList, Label } from "./styles";
