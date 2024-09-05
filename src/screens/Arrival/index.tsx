@@ -87,6 +87,8 @@ export default function Arrival() {
   }
 
   async function getLocationInfo() {
+    if (!historic) return;
+
     const lastSync = await getLastSyncTimestamp();
     const updatedAt = historic!.update_at.getTime();
     setDataNotSynced(updatedAt > lastSync);
