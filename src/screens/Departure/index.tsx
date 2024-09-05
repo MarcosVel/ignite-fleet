@@ -2,7 +2,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@realm/react";
 import {
   LocationAccuracy,
+  LocationObjectCoords,
   LocationSubscription,
+  requestBackgroundPermissionsAsync,
   useForegroundPermissions,
   watchPositionAsync,
 } from "expo-location";
@@ -23,12 +25,14 @@ import {
   LicensePlateInput,
   Loading,
   LocationInfo,
+  Map,
   TextAreaInput,
 } from "../../components";
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { getAddressLocation, licensePlateValidate } from "../../utils";
 import { Container, Content, Message } from "./styles";
+import { startLocationTask } from "../../tasks/backgroundLocTask";
 
 export default function Departure() {
   const realm = useRealm();
@@ -46,11 +50,13 @@ export default function Departure() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isLoadingLoc, setIsLoadingLoc] = useState(true);
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
+  const [currentCoords, setCurrentCoords] =
+    useState<LocationObjectCoords | null>(null);
 
   const [locForegroundPermission, reqLocForegroundPermission] =
     useForegroundPermissions();
 
-  function handleDeparture() {
+  async function handleDeparture() {
     try {
       if (!licensePlateValidate(data.licensePlate)) {
         licensePlateRef.current?.focus();
@@ -68,7 +74,27 @@ export default function Departure() {
         );
       }
 
+      if (!currentCoords?.latitude && !currentCoords?.longitude) {
+        return Alert.alert(
+          "Localização!",
+          "Não foi possível obter a localização atual."
+        );
+      }
+
       setIsRegistering(true);
+
+      const backgroundPermissions = await requestBackgroundPermissionsAsync();
+
+      if (!backgroundPermissions.granted) {
+        setIsRegistering(true);
+
+        return Alert.alert(
+          "Localização",
+          "É necessário que o App tenha acesso a localização em segundo plano."
+        );
+      }
+
+      await startLocationTask();
 
       realm.write(() => {
         realm.create(
@@ -107,10 +133,11 @@ export default function Departure() {
       (location) => {
         console.log("location", location);
 
+        setCurrentCoords(location.coords);
+
         getAddressLocation(location.coords)
           .then((address) => {
             if (address) {
-              console.log(address);
               setCurrentAddress(address);
             }
           })
@@ -150,6 +177,8 @@ export default function Departure() {
 
         <KeyboardAwareScrollView extraHeight={100}>
           <ScrollView>
+            {currentCoords && <Map coordinates={[currentCoords]} />}
+
             <Content>
               {currentAddress && (
                 <LocationInfo

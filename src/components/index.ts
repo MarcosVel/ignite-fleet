@@ -8,5 +8,6 @@ export { default as IconBox } from "./IconBox";
 export { default as LicensePlateInput } from "./LicensePlateInput";
 export { default as Loading } from "./Loading";
 export { default as LocationInfo } from "./LocationInfo";
+export { default as Map } from "./Map";
 export { default as TextAreaInput } from "./TextAreaInput";
 export { default as TopMessage } from "./TopMessage";
