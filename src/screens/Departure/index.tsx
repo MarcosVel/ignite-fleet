@@ -103,6 +103,13 @@ export default function Departure() {
             user_id: id,
             license_plate: data.licensePlate.toUpperCase(),
             description: data.description,
+            coords: [
+              {
+                latitude: currentCoords.latitude,
+                longitude: currentCoords.longitude,
+                timestamp: new Date().getTime(),
+              },
+            ],
           })
         );
       });

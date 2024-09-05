@@ -67,9 +67,12 @@ export default function Arrival() {
         );
       }
 
+      const locations = await getStorageLocations();
+
       realm.write(() => {
         historic.status = "arrival";
         historic.update_at = new Date();
+        historic.coords.push(...locations);
       });
 
       await stopLocationTask();
