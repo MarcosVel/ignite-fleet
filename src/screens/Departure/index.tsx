@@ -4,6 +4,7 @@ import {
   LocationAccuracy,
   LocationObjectCoords,
   LocationSubscription,
+  requestBackgroundPermissionsAsync,
   useForegroundPermissions,
   watchPositionAsync,
 } from "expo-location";
@@ -54,7 +55,7 @@ export default function Departure() {
   const [locForegroundPermission, reqLocForegroundPermission] =
     useForegroundPermissions();
 
-  function handleDeparture() {
+  async function handleDeparture() {
     try {
       if (!licensePlateValidate(data.licensePlate)) {
         licensePlateRef.current?.focus();
@@ -72,7 +73,25 @@ export default function Departure() {
         );
       }
 
+      if (!currentCoords?.latitude && !currentCoords?.longitude) {
+        return Alert.alert(
+          "Localização!",
+          "Não foi possível obter a localização atual."
+        );
+      }
+
       setIsRegistering(true);
+
+      const backgroundPermissions = await requestBackgroundPermissionsAsync();
+
+      if (!backgroundPermissions.granted) {
+        setIsRegistering(true);
+
+        return Alert.alert(
+          "Localização",
+          "É necessário que o App tenha acesso a localização em segundo plano."
+        );
+      }
 
       realm.write(() => {
         realm.create(
@@ -156,15 +175,7 @@ export default function Departure() {
 
         <KeyboardAwareScrollView extraHeight={100}>
           <ScrollView>
-            {currentCoords && (
-              <Map
-                coordinates={[
-                  { latitude: -23.5657, longitude: -46.6515 },
-                  { latitude: -23.5694, longitude: -46.6467 },
-                ]}
-              />
-            )}
-            {/* {currentCoords && <Map coordinates={[currentCoords]} />} */}
+            {currentCoords && <Map coordinates={[currentCoords]} />}
 
             <Content>
               {currentAddress && (
