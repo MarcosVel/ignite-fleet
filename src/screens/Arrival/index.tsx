@@ -1,10 +1,19 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
 import { X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
 import { LatLng } from "react-native-maps";
 import { BSON } from "realm";
-import { Button, ButtonIcon, Header, Locations, Map } from "../../components";
+import {
+  Button,
+  ButtonIcon,
+  Header,
+  Loading,
+  Locations,
+  Map,
+} from "../../components";
+import { LocationInfoProps } from "../../components/LocationInfo";
 import {
   getLastSyncTimestamp,
   getStorageLocations,
@@ -12,6 +21,7 @@ import {
 import { useObject, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { stopLocationTask } from "../../tasks/backgroundLocTask";
+import { getAddressLocation } from "../../utils";
 import {
   Container,
   Content,
@@ -21,9 +31,6 @@ import {
   LicensePlate,
   SyncMessage,
 } from "./styles";
-import { getAddressLocation } from "../../utils";
-import { LocationInfoProps } from "../../components/LocationInfo";
-import dayjs from "dayjs";
 
 type RouteParamsProps = {
   id: string;
@@ -41,6 +48,7 @@ export default function Arrival() {
     {} as LocationInfoProps
   );
   const [arrival, setArrival] = useState<LocationInfoProps | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
 
@@ -138,11 +146,17 @@ export default function Arrival() {
         address: `Chegando em ${arrivalStreet ?? ""}`,
       });
     }
+
+    setIsLoading(false);
   }
 
   useEffect(() => {
     getLocationInfo();
   }, [historic]);
+
+  if (isLoading) {
+    <Loading />;
+  }
 
   return (
     <Container>
