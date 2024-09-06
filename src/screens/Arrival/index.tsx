@@ -21,6 +21,9 @@ import {
   LicensePlate,
   SyncMessage,
 } from "./styles";
+import { getAddressLocation } from "../../utils";
+import { LocationInfoProps } from "../../components/LocationInfo";
+import dayjs from "dayjs";
 
 type RouteParamsProps = {
   id: string;
@@ -34,6 +37,10 @@ export default function Arrival() {
 
   const [dataNotSynced, setDataNotSynced] = useState(false);
   const [coordinates, setCoordinates] = useState<LatLng[]>([]);
+  const [departure, setDeparture] = useState<LocationInfoProps>(
+    {} as LocationInfoProps
+  );
+  const [arrival, setArrival] = useState<LocationInfoProps | null>(null);
 
   const historic = useObject(Historic, new BSON.UUID(id) as unknown as string);
 
@@ -109,6 +116,28 @@ export default function Arrival() {
       });
       setCoordinates(coordsOnDb ?? []);
     }
+
+    if (historic?.coords[0]) {
+      const departureStreetName = await getAddressLocation(historic?.coords[0]);
+      setDeparture({
+        label: dayjs(new Date(historic?.coords[0].timestamp)).format(
+          "DD/MM/YYYY [às] HH:mm"
+        ),
+        address: `Saindo de ${departureStreetName ?? ""}`,
+      });
+    }
+
+    if (historic?.status === "arrival") {
+      const lastLocation = historic.coords[historic.coords.length - 1];
+      const arrivalStreet = await getAddressLocation(lastLocation);
+
+      setArrival({
+        label: dayjs(new Date(lastLocation.timestamp)).format(
+          "DD/MM/YYYY [às] HH:mm"
+        ),
+        address: `Chegando em ${arrivalStreet ?? ""}`,
+      });
+    }
   }
 
   useEffect(() => {
@@ -122,10 +151,7 @@ export default function Arrival() {
       {coordinates.length > 0 && <Map coordinates={coordinates} />}
 
       <Content>
-        <Locations
-          departure={{ label: "Saída", address: "Saída teste" }}
-          arrival={{ label: "Saída", address: "Saída teste" }}
-        />
+        <Locations departure={departure} arrival={arrival} />
 
         <Label>Placa do veículo</Label>
         <LicensePlate>{historic?.license_plate}</LicensePlate>
