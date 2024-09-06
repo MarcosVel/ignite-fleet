@@ -25,6 +25,7 @@ export const Container = styled.View<Props>`
   background-color: ${theme.COLORS.GRAY_700};
   justify-content: center;
   align-items: center;
+  z-index: 2;
 
   ${({ size }) => variantSizeStyles(size)}
 `;

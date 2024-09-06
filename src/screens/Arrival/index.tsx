@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, ToastAndroid } from "react-native";
 import { LatLng } from "react-native-maps";
 import { BSON } from "realm";
-import { Button, ButtonIcon, Header, Map } from "../../components";
+import { Button, ButtonIcon, Header, Locations, Map } from "../../components";
 import {
   getLastSyncTimestamp,
   getStorageLocations,
@@ -122,6 +122,11 @@ export default function Arrival() {
       {coordinates.length > 0 && <Map coordinates={coordinates} />}
 
       <Content>
+        <Locations
+          departure={{ label: "Saída", address: "Saída teste" }}
+          arrival={{ label: "Saída", address: "Saída teste" }}
+        />
+
         <Label>Placa do veículo</Label>
         <LicensePlate>{historic?.license_plate}</LicensePlate>
 
