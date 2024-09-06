@@ -3,10 +3,13 @@ import { IconBoxProps } from "../ButtonIcon";
 import IconBox from "../IconBox";
 import { Container, Description, Info, Label } from "./styles";
 
-type Props = {
-  icon: IconBoxProps;
+export type LocationInfoProps = {
   label: string;
   address: string;
+};
+
+type Props = LocationInfoProps & {
+  icon: IconBoxProps;
 };
 
 export default function LocationInfo({ icon, label, address }: Props) {

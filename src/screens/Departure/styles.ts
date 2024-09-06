@@ -19,5 +19,11 @@ export const Message = styled.Text`
   font-size: ${theme.FONT_SIZE.SM}px;
   font-family: ${theme.FONT_FAMILY.REGULAR};
   text-align: center;
-  margin: 32px 24px;
+  margin: 32px 0;
+`;
+
+export const MessageContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 24px;
 `;
