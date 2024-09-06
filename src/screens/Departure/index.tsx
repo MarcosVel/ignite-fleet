@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
+  Linking,
   ScrollView,
   TextInput,
   ToastAndroid,
@@ -30,9 +31,9 @@ import {
 } from "../../components";
 import { useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
-import { getAddressLocation, licensePlateValidate } from "../../utils";
-import { Container, Content, Message } from "./styles";
 import { startLocationTask } from "../../tasks/backgroundLocTask";
+import { getAddressLocation, licensePlateValidate } from "../../utils";
+import { Container, Content, Message, MessageContent } from "./styles";
 
 export default function Departure() {
   const realm = useRealm();
@@ -90,7 +91,13 @@ export default function Departure() {
 
         return Alert.alert(
           "Localização",
-          "É necessário que o App tenha acesso a localização em segundo plano."
+          "É necessário que o App tenha acesso a localização em segundo plano.",
+          [
+            {
+              text: "Abrir configurações",
+              onPress: () => Linking.openSettings(),
+            },
+          ]
         );
       }
 
@@ -164,11 +171,18 @@ export default function Departure() {
       <Container>
         <Header title="Saída" />
 
-        <Message>
-          {
-            "Você precisa permitir que o aplicativo tenha acesso a localização para utilizar essa funcionalidade.\nPor favor, acesse as configurações do seu aplicativo para conceder essa permissão ao aplicativo."
-          }
-        </Message>
+        <MessageContent>
+          <Message>
+            {
+              "Você precisa permitir que o aplicativo tenha acesso a localização para utilizar essa funcionalidade.\n\nPor favor, acesse as configurações do seu aplicativo para conceder essa permissão ao aplicativo."
+            }
+          </Message>
+
+          <Button
+            title="Abrir configurações"
+            onPress={() => Linking.openSettings()}
+          />
+        </MessageContent>
       </Container>
     );
   }
